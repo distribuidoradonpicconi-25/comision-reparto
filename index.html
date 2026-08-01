@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comisión Reparto (0,5%)</title>
+
+<link rel="manifest" href="manifest.json">
+
+<meta name="theme-color" content="#007bff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+<link rel="icon" href="icon-192.png">
+
+<style>
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    background:#f4f4f4;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    margin:0;
+}
+
+.card{
+    background:#fff;
+    width:90%;
+    max-width:400px;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 0 15px rgba(0,0,0,.15);
+    text-align:center;
+}
+
+h1{
+    margin-top:0;
+    color:#333;
+}
+
+input{
+    width:100%;
+    box-sizing:border-box;
+    padding:15px;
+    font-size:28px;
+    text-align:center;
+    border:2px solid #ccc;
+    border-radius:10px;
+    margin:20px 0;
+}
+
+#resultado{
+    font-size:38px;
+    font-weight:bold;
+    color:#0b8f2a;
+    margin:20px 0;
+}
+
+button{
+    width:100%;
+    padding:14px;
+    font-size:20px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    margin-top:10px;
+}
+
+#copiar{
+    background:#007bff;
+    color:white;
+}
+
+#limpiar{
+    background:#dc3545;
+    color:white;
+}
+</style>
+</head>
+
+<script>
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+        navigator.serviceWorker.register("service-worker.js");
+    });
+}
+</script>
+
+<body>
+
+<div class="card">
+
+<h1>Comisión Reparto (0,5%)</h1>
+
+<input
+type="text"
+id="importe"
+placeholder="Ingrese el importe"
+inputmode="numeric"
+autocomplete="off">
+
+<div id="resultado">$ 0,00</div>
+
+<button id="copiar">Copiar resultado</button>
+<button id="limpiar">Limpiar</button>
+
+</div>
+
+<script>
+const input = document.getElementById("importe");
+const resultado = document.getElementById("resultado");
+
+function calcular() {
+
+    // Lo que escribió el usuario
+    let texto = input.value;
+
+    // Para calcular: quitar puntos de miles y convertir coma en punto
+    let numero = parseFloat(texto.replace(/\./g, "").replace(",", "."));
+
+    if (isNaN(numero)) {
+        resultado.textContent = "$ 0,00";
+        return;
+    }
+
+    let comision = numero * 0.005;
+
+    resultado.textContent =
+        "$ " + comision.toLocaleString("es-AR", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+        });
+
+    // Formatear el input
+    let partes = texto.replace(/\./g, "").split(",");
+
+    let entero = parseInt(partes[0] || "0", 10);
+
+    let formateado = entero.toLocaleString("es-AR");
+
+    if (partes.length > 1) {
+        formateado += "," + partes[1];
+    }
+
+    input.value = formateado;
+}
+
+input.addEventListener("input", calcular);
+
+document.getElementById("limpiar").onclick = ()=>{
+    input.value="";
+    resultado.textContent="$ 0,00";
+    input.focus();
+}
+
+document.getElementById("copiar").onclick = async () => {
+
+    const boton = document.getElementById("copiar");
+
+    try {
+        await navigator.clipboard.writeText(resultado.textContent);
+
+        boton.textContent = "✓ Copiado";
+        boton.style.background = "#28a745"; // Verde
+        boton.disabled = true;
+
+        setTimeout(() => {
+            boton.textContent = "Copiar resultado";
+            boton.style.background = "#007bff"; // Vuelve al azul
+            boton.disabled = false;
+        }, 1200);
+
+    } catch (err) {
+        console.error(err);
+
+        boton.textContent = "Error al copiar";
+        boton.style.background = "#dc3545"; // Rojo
+
+        setTimeout(() => {
+            boton.textContent = "Copiar resultado";
+            boton.style.background = "#007bff"; // Vuelve al azul
+        }, 1200);
+    }
+
+};
+
+input.focus();
+</script>
+
+</body>
+</html>
