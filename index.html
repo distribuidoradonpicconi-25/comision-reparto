@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Comisión Reparto (0,5%)</title>
+<title>Comisión Reparto (0,35%)</title>
 
 <link rel="manifest" href="manifest.json">
 
@@ -91,7 +91,7 @@ if ("serviceWorker" in navigator) {
 
 <div class="card">
 
-<h1>Comisión Reparto (0,5%)</h1>
+<h1>Comisión Reparto (0,35%)</h1>
 
 <input
 type="text"
@@ -124,7 +124,7 @@ function calcular() {
         return;
     }
 
-    let comision = numero * 0.005;
+    let comision = numero * 0.0035;
 
     resultado.textContent =
         "$ " + comision.toLocaleString("es-AR", {
